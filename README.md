@@ -1,6 +1,8 @@
 # iamport-ionic for KG이니시스
 Cordova 또는 Ionic 환경에서 아임포트 결제모듈을 쉽게 연동하기 위한 Ionic Cordova 플러그인입니다.(KG이니시스용)  
-외부주소로의 redirection이 포함되어있어 InAppBrowser를 활용하며, 외부주소에서 다시 앱 복귀를 위해 Custom URL Scheme을 사용합니다.
+외부주소로의 redirection이 포함되어있어 InAppBrowser를 활용하며, 외부주소에서 다시 앱 복귀를 위해 Custom URL Scheme을 사용합니다.  
+
+(현재 iOS버전은 준비 중입니다)  
 
 ## Required
 
@@ -9,13 +11,14 @@ Cordova 또는 Ionic 환경에서 아임포트 결제모듈을 쉽게 연동하�
 
 ## Install
 
-### 1. Github 소스로 설치
-cordova plugin add https://github.com/iamport/iamport-ionic-inicis --variable URL_SCHEME=**ioniciamport**
-
 플러그인명세(plugin.xml)에 dependency가 정의되어있기 때문에 iamport-ionic-inicis을 설치하면 Custom URL Scheme 플러그인과 InAppBrowser 플러그인이 설치됩니다.  
 Custom URL Scheme 플러그인 설치를 위해 URL_SCHEME파라메터를 전달받습니다. 앱에서 사용하실 고유한 URL Scheme값을 지정하시면 됩니다.  
 
-### 2. NPM 설치
+### 1. NPM 설치
+cordova plugin add iamport-ionic-inicis --variable URL_SCHEME=**ioniciamport**
+
+### 2. Github 소스로 설치
+cordova plugin add https://github.com/iamport/iamport-ionic-inicis --variable URL_SCHEME=**ioniciamport**
 
 
 ## Usage (Cordova 방식)
@@ -77,3 +80,6 @@ angular.controller('SomethingCtrl', function($scope, $http, $cordovaIamport) {
 ### Android
 [cordova-plugin-whitelist](https://github.com/apache/cordova-plugin-whitelist)에 의해 PG사 페이지 navigation 과정에서 앱을 벗어나 Chrome브라우저 새창이 열리는 경우가 발생할 수 있음 *(ex. location.href = 'http://some.domain.com')*  
 브라우저로 새창열림을 방지하기 위해 `config.xml`에 `<allow-navigation href="*" />`가 추가되도록 플러그인 명세 `plugin.xml`를 작성하였습니다.  
+
+### iOS
+개발 중

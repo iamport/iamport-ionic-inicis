@@ -1,0 +1,36 @@
+{
+  "name": "iamport-ionic-inicis",
+  "version": "1.0.0",
+  "description": "Inicis Payment Plugin using Iamport",
+  "cordova": {
+    "id": "cordova-plugin-iamport-inicis",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iamport/iamport-ionic-inicis.git"
+  },
+  "keywords": [
+    "payment",
+    "iamport",
+    "inicis",
+    "ecosystem:cordova",
+    "cordova-ios",
+    "cordova-android"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=4.0.0"
+    }
+  ],
+  "author": "iamport",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/iamport/iamport-ionic-inicis/issues"
+  },
+  "homepage": "https://github.com/iamport/iamport-ionic-inicis#readme"
+}
