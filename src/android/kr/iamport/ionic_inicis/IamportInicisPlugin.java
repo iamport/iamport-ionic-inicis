@@ -43,7 +43,7 @@ public class IamportInicisPlugin extends CordovaPlugin {
     /**
      * @param scheme
      * @return 해당 scheme에 대해 처리를 직접 하는지 여부
-
+     *
      * 결제를 위한 3rd-party 앱이 아직 설치되어있지 않아 ActivityNotFoundException이 발생하는 경우 처리합니다.
      * 여기서 handler되지않은 scheme에 대해서는 intent로부터 Package정보 추출이 가능하다면 다음에서 packageName으로 market이동합니다.
      *

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   id="cordova-plugin-iamport-inicis"
-  version="0.9.0">
+  version="1.0.0">
 
     <name>IonicIamportInicis</name>
     <description>Inicis Payment Plugin using Iamport</description>
@@ -28,6 +28,7 @@
                 <param name="android-package" value="kr.iamport.ionic_inicis.IamportInicisPlugin"/>
                 <param name="onload" value="true" />
             </feature>
+            <allow-navigation href="*" /> <!-- cordova-plugin-whitelist 에 의해 chrome browser 새창열림 방지(ex. location.href = 'url') -->
         </config-file>
 
         <source-file src="src/android/kr/iamport/ionic_inicis/IamportInicisPlugin.java" target-dir="src/kr/iamport/ionic_inicis" />
