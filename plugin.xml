@@ -34,7 +34,7 @@
         </config-file>
 
         <source-file src="src/android/kr/iamport/ionic_inicis/IamportInicisPlugin.java" target-dir="src/kr/iamport/ionic_inicis" />
-        <source-file src="src/android/kr/iamport/ionic_inicis/IamportUrlSchemeHandler.java" target-dir="src/kr/iamport/ionic_inicis" />
+        <source-file src="src/android/kr/iamport/ionic_inicis/InicisUrlSchemeHandler.java" target-dir="src/kr/iamport/ionic_inicis" />
         <source-file src="src/android/kr/iamport/ionic_inicis/PaymentScheme.java" target-dir="src/kr/iamport/ionic_inicis" />
     </platform>
 
