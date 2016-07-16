@@ -14,8 +14,9 @@
     <engines>
         <engine name="cordova" version=">=4.0.0" />
     </engines>
+    <dependency id="iamport-cordova-interface" url="https://github.com/iamport/iamport-cordova-interface"/>
     <dependency id="cordova-plugin-customurlscheme" url="https://github.com/EddyVerbruggen/Custom-URL-scheme"/>
-    <dependency id="cordova-plugin-inappbrowser" url="https://github.com/apache/cordova-plugin-inappbrowser"/>
+    <dependency id="cordova-plugin-inappbrowser-url-scheme" url="https://github.com/iamport/cordova-plugin-inappbrowser"/>
 
     <asset src="www/iamport-checkout.html" target="iamport-checkout.html"></asset>
     <asset src="www/js/jquery-1.12.4.min.js" target="js/jquery-1.12.4.min.js"></asset>
@@ -28,6 +29,7 @@
                 <param name="android-package" value="kr.iamport.ionic_inicis.IamportInicisPlugin"/>
                 <param name="onload" value="true" />
             </feature>
+            <preference name="IamportURLSchemeHandler" value="kr.iamport.ionic_inicis.InicisUrlSchemeHandler"/> <!-- iamport inappbrowser(cordova inappbrowser fork) -->
             <allow-navigation href="*" /> <!-- cordova-plugin-whitelist 에 의해 chrome browser 새창열림 방지(ex. location.href = 'url') -->
         </config-file>
 
