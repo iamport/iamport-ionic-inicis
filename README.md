@@ -1,13 +1,14 @@
 # iamport-ionic for KG이니시스
 Cordova 또는 Ionic 환경에서 아임포트 결제모듈을 쉽게 연동하기 위한 Ionic Cordova 플러그인입니다.(KG이니시스용)  
 외부주소로의 redirection이 포함되어있어 InAppBrowser를 활용하며, 외부주소에서 다시 앱 복귀를 위해 Custom URL Scheme을 사용합니다.  
+(InAppBrowser는 URL처리가 가능하도록 fork된 버전을 사용하고 있습니다)  
 
 (현재 iOS버전은 준비 중입니다)  
 
 ## Required
 
 - [Custom URL scheme](https://github.com/EddyVerbruggen/Custom-URL-scheme)
-- [InAppBrowser](https://github.com/apache/cordova-plugin-inappbrowser)
+- [Url Scheme InAppBrowser(fork 버전)](https://github.com/iamport/cordova-plugin-inappbrowser)
 
 ## Install
 
