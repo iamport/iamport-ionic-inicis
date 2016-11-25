@@ -22,7 +22,45 @@
     <asset src="www/js/jquery-1.12.4.min.js" target="js/jquery-1.12.4.min.js"></asset>
     <asset src="www/js/ng-cordova-iamport.js" target="js/ng-cordova-iamport.js"></asset>
 
-    <platform name="ios"></platform>
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="IamportInicis">
+                <param name="ios-package" value="IamportInicisPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+
+            <preference name="IamportAppScheme" value="$URL_SCHEME"/>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+            <array>
+                <string>kftc-bankpay</string> <!-- 계좌이체 -->
+                <string>ispmobile</string> <!-- ISP모바일 -->
+                <string>itms-apps</string> <!-- 앱스토어 -->
+                <string>hdcardappcardansimclick</string> <!-- 현대카드-앱카드 -->
+                <string>smhyundaiansimclick</string> <!-- 현대카드-공인인증서 -->
+                <string>shinhan-sr-ansimclick</string> <!-- 신한카드-앱카드 -->
+                <string>smshinhanansimclick</string> <!-- 신한카드-공인인증서 -->
+                <string>kb-acp</string> <!-- 국민카드-앱카드 -->
+                <string>mpocket.online.ansimclick</string> <!-- 삼성카드-앱카드 -->
+                <string>ansimclickscard</string> <!-- 삼성카드-온라인결제 -->
+                <string>ansimclickipcollect</string> <!-- 삼성카드-온라인결제 -->
+                <string>vguardstart</string> <!-- 삼성카드-백신 -->
+                <string>samsungpay</string> <!-- 삼성카드-삼성페이 -->
+                <string>scardcertiapp</string> <!-- 삼성카드-공인인증서 -->
+                <string>lottesmartpay</string> <!-- 롯데카드-모바일결제 -->
+                <string>lotteappcard</string> <!-- 롯데카드-앱카드 -->
+                <string>cloudpay</string> <!-- 하나카드-앱카드 -->
+                <string>nhappvardansimclick</string> <!-- 농협카드-앱카드 -->
+                <string>nonghyupcardansimclick</string> <!-- 농협카드-공인인증서 -->
+                <string>citispay</string> <!-- 씨티카드-앱카드 -->
+                <string>citicardappkr</string> <!-- 씨티카드-공인인증서 -->
+            </array>
+        </config-file>
+
+        <header-file src="src/ios/IamportInicisPlugin.h" />
+        <source-file src="src/ios/IamportInicisPlugin.m" />
+    </platform>
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="IamportInicis" >
