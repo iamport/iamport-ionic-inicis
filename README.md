@@ -83,4 +83,16 @@ angular.controller('SomethingCtrl', function($scope, $http, $cordovaIamport) {
 브라우저로 새창열림을 방지하기 위해 `config.xml`에 `<allow-navigation href="*" />`가 추가되도록 플러그인 명세 `plugin.xml`를 작성하였습니다.  
 
 ### iOS
-개발 중
+각 카드사별 앱카드 등 외부 scheme을 호출하는데 문제없도록 info.plist파일에 모든 scheme명세를 추가하였습니다.  
+
+#### 알려진 문제점  
+실시간계좌이체 결제는 결제완료 후 inappbrowser가 자동으로 닫히지 않는 문제가 있으므로 해당 이슈가 해결되기 전까지는 `IMP.request_pay(param, callback)` 호출 시 param.pay_method : 'trans'는 사용하지 않기를 권장드립니다.  
+
+실시간 계좌이체의 경우 기본적인 KG이니시스 동작 순서가 다음과 같습니다. 
+
+1. ionic앱에서 Bankpay호출
+2. Bankpay앱에서 계좌정보 인증 및 이체
+3. 이체 후 Safari브라우저 열림
+4. Safari브라우저 화면에서 확인버튼 클릭 시 ionic앱으로 이동
+
+KG이니시스 구조상 중간에 Safari브라우저가 호출되는 문제 때문에 inappbrowser가 자동으로 닫혀지지 않는 한계가 있습니다.  
