@@ -15,7 +15,7 @@ public class InicisUrlSchemeHandler extends IamportUrlSchemeHandler {
     }
 
     public boolean handleUrl(String url) {
-        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("javascript:")) {
+        if (!url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("file://") && !url.startsWith("javascript:")) {
             Intent intent = null;
 
             try {
