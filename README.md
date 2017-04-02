@@ -3,8 +3,6 @@ Cordova 또는 Ionic 환경에서 아임포트 결제모듈을 쉽게 연동하�
 외부주소로의 redirection이 포함되어있어 InAppBrowser를 활용하며, 외부주소에서 다시 앱 복귀를 위해 Custom URL Scheme을 사용합니다.  
 (InAppBrowser는 URL처리가 가능하도록 fork된 버전을 사용하고 있습니다)  
 
-(현재 iOS버전은 준비 중입니다)  
-
 ## Required
 
 - [Custom URL scheme](https://github.com/EddyVerbruggen/Custom-URL-scheme)
@@ -23,8 +21,46 @@ cordova plugin add https://github.com/iamport/iamport-ionic-inicis --variable UR
 
 
 ## Usage (Cordova 방식)
-모바일 브라우저의 아임포트 결제모듈 연동방식과 동일합니다.  
-javascript에서 `IMP.request_pay(param, callback)`을 호출함으로써 결제가 시작됩니다.  
+플러그인 설치가 되면 javascript module이 자동 복사/등록됩니다.(cordova-iamport.js)  
+결제가 필요한 순간에 다음과 같이 javascript 호출을 통해 `inappbrowser`를 통해 결제 프로세스를 시작할 수 있습니다.  
+
+```javascript
+IonicIamportInicis.payment(user_code, param, callback)
+```
+
+### 1. 특징  
+cordova 특성상 `inappbrowser`를 통해 결제프로세스가 진행되므로 모바일 브라우저 연동과는 다소 차이가 있습니다. 
+`m_redirect_url`속성을 overwrite하여 `inappbrowser`결제를 구현하고 있기 때문에 다음과 같은 차이점이 있습니다.  
+(참조 : [cordova-iamport.js](https://github.com/iamport/iamport-ionic-inicis/blob/master/www/js/cordova-iamport.js#L18-L19))  
+
+- m\_redirect\_url속성을 선언할 필요가 없음(선언해도 overwrite됨)  
+- callback에 전달되는 rsp속성이 제한됨(success, imp\_uid, merchant\_uid, error\_msg 뿐)  
+
+### 2. Example  
+```javascript
+IonicIamportInicis.payment('imp68124833', {
+    pay_method : 'card',
+    merchant_uid : 'merchant_' + new Date().getTime(),
+    name : '주문명:결제테스트',
+    amount : 1400,
+    buyer_email : 'iamport@siot.do',
+    buyer_name : '구매자이름',
+    buyer_tel : '010-1234-5678',
+    buyer_addr : '서울특별시 강남구 삼성동',
+    buyer_postcode : '123-456'
+}, function(rsp) {
+    if ( rsp.success ) {
+        var msg = '결제가 완료되었습니다.';
+        msg += '고유ID : ' + rsp.imp_uid;
+        msg += '상점 거래ID : ' + rsp.merchant_uid;
+    } else {
+        var msg = '결제에 실패하였습니다.';
+        msg += '에러내용 : ' + rsp.error_msg;
+    }
+    alert(msg);
+});
+```
+
 
 ## Usage (Ionic 방식)
 ### 1. javascript 선언  

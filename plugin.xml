@@ -21,6 +21,10 @@
     <asset src="www/iamport-checkout.html" target="iamport-checkout.html"></asset>
     <asset src="www/js/jquery-1.12.4.min.js" target="js/jquery-1.12.4.min.js"></asset>
     <asset src="www/js/ng-cordova-iamport.js" target="js/ng-cordova-iamport.js"></asset>
+    
+    <js-module src="www/js/cordova-iamport.js" name="IonicIamportInicis">
+        <clobbers target="IonicIamportInicis" />
+    </js-module>
 
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
