@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   id="cordova-plugin-iamport-inicis"
-  version="1.0.0">
+  version="1.1.1">
 
     <name>IonicIamportInicis</name>
     <description>Inicis Payment Plugin using Iamport</description>
@@ -59,6 +59,8 @@
                 <string>nonghyupcardansimclick</string> <!-- 농협카드-공인인증서 -->
                 <string>citispay</string> <!-- 씨티카드-앱카드 -->
                 <string>citicardappkr</string> <!-- 씨티카드-공인인증서 -->
+                <string>kakaotalk</string> <!-- 카카오페이 -->
+                <string>payco</string> <!-- 페이코 -->
             </array>
         </config-file>
 
@@ -72,6 +74,7 @@
                 <param name="onload" value="true" />
             </feature>
             <preference name="IamportURLSchemeHandler" value="kr.iamport.ionic_inicis.InicisUrlSchemeHandler"/> <!-- iamport inappbrowser(cordova inappbrowser fork) -->
+            <preference name="AndroidLaunchMode" value="singleTask" /> <!-- 카카오페이 -->
             <allow-navigation href="*" /> <!-- cordova-plugin-whitelist 에 의해 chrome browser 새창열림 방지(ex. location.href = 'url') -->
         </config-file>
 

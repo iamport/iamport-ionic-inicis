@@ -38,19 +38,15 @@
 							callback.call(cordova, rsp);
 						}
 
-						inAppBrowserRef.removeEventListener('loadstart', startCallback);
-						inAppBrowserRef.removeEventListener('loadstop', stopCallback);
-						inAppBrowserRef.removeEventListener('exit', exitCallback);
-						setTimeout(function() {
-							inAppBrowserRef.close();
-						}, 10);
+						finish();
 					}
 				};
 
 				var stopCallback = function(event) {
 					if ( (event.url).indexOf(payment_url) > -1 ) {
-						var iamport_script = "IMP.init('" + user_code + "');\n";
-						iamport_script += "IMP.request_pay(" + JSON.stringify(param) + ")";
+						var iamport_script = "IMP.init('" + user_code + "');\n",
+							inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&error_msg='+rsp.error_msg;}}";
+						iamport_script += "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
 
 						inAppBrowserRef.executeScript({
 							code : iamport_script
@@ -72,10 +68,38 @@
 					}
 				};
 
+				var finish = function() {
+					inAppBrowserRef.removeEventListener('loadstart', startCallback);
+					inAppBrowserRef.removeEventListener('loadstop', stopCallback);
+					inAppBrowserRef.removeEventListener('exit', exitCallback);
+					setTimeout(function() {
+						inAppBrowserRef.close();
+					}, 10);
+				};
+
 
 				inAppBrowserRef.addEventListener('loadstart', startCallback);
 				inAppBrowserRef.addEventListener('loadstop', stopCallback);
 				inAppBrowserRef.addEventListener('exit', exitCallback);
+
+				//for KakaoPay
+				if ( param.app_scheme ) {
+					var oldHandleOpenUrl = window.handleOpenURL;
+
+					window.handleOpenURL = function(url) {
+						if ( url == (param.app_scheme+'://process') ) {
+							inAppBrowserRef.executeScript({
+								code : "IMP.communicate({result:'process'})"
+							});
+						} else if ( url == (param.app_scheme+'://cancel') ) {
+							inAppBrowserRef.executeScript({
+								code : "IMP.communicate({result:'cancel'})"
+							});
+						} else {
+							oldHandleOpenUrl(url);
+						}
+					}
+				}
 
 				inAppBrowserRef.show();
 			} else {
