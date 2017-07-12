@@ -45,7 +45,7 @@
 				var stopCallback = function(event) {
 					if ( (event.url).indexOf(payment_url) > -1 ) {
 						var iamport_script = "IMP.init('" + user_code + "');\n",
-							inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&error_msg='+rsp.error_msg;}}";
+							inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}";
 						iamport_script += "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
 
 						inAppBrowserRef.executeScript({
