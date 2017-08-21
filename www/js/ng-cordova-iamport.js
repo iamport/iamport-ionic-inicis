@@ -23,40 +23,53 @@
         var deferred = $q.defer();
 
         if( cordova.InAppBrowser ) {
-          var payment_url = 'iamport-checkout.html#' + Math.floor(Math.random()*100000),
+          var payment_url = 'iamport-checkout.html?user-code=' + user_code,
               m_redirect_url = 'http://localhost/iamport';
 
           param.m_redirect_url = m_redirect_url;//강제로 변환
 
-          var inAppBrowserRef = cordova.InAppBrowser.open(payment_url, '_blank', 'location=no');
+          var inAppBrowserRef = cordova.InAppBrowser.open(payment_url, '_blank', 'location=no'),
+              paymentProgress = false;
 
-          inAppBrowserRef.addEventListener('loadstart', function(event) {
+          var startCallback = function(event) {
             if( (event.url).indexOf(m_redirect_url) === 0 ) { //결제 끝.
               var query = (event.url).substring( m_redirect_url.length + 1 ) // m_redirect_url+? 뒤부터 자름
               var data = parseQuery(query); //query data
 
               deferred.resolve(data);
-              setTimeout(function() {
-                inAppBrowserRef.close();
-              }, 10);
+              finish();
             }
-          });
+          };
 
-          inAppBrowserRef.addEventListener('loadstop', function(event) {
-            if ( (event.url).indexOf(payment_url) > -1 ) {
-              var iamport_script = "IMP.init('" + user_code + "');\n",
-                  inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}";
+          var stopCallback = function(event) {
+            if ( !paymentProgress && (event.url).indexOf(payment_url) > -1 ) {
+              paymentProgress = true;
 
-              iamport_script += "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
+              var inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}",
+                  iamport_script = "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
 
               inAppBrowserRef.executeScript({
                 code : iamport_script
               });
             }
-          });
-          inAppBrowserRef.addEventListener('exit', function(event) {
+          };
+
+          var exitCallback = function(event) {
             deferred.reject("사용자가 결제를 취소하였습니다.");
-          });
+          };
+
+          var finish = function() {
+            inAppBrowserRef.removeEventListener('loadstart', startCallback);
+            inAppBrowserRef.removeEventListener('loadstop', stopCallback);
+            inAppBrowserRef.removeEventListener('exit', exitCallback);
+            setTimeout(function() {
+              inAppBrowserRef.close();
+            }, 10);
+          }
+
+          inAppBrowserRef.addEventListener('loadstart', startCallback);
+          inAppBrowserRef.addEventListener('loadstop', stopCallback);
+          inAppBrowserRef.addEventListener('exit', exitCallback);
 
           //for KakaoPay
           if ( param.app_scheme ) {

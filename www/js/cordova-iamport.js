@@ -15,12 +15,13 @@
 	module.exports = {
 		payment : function (user_code, param, callback) {
 			if( cordova.InAppBrowser ) {
-				var payment_url = 'iamport-checkout.html#' + Math.floor(Math.random()*100000),
+				var payment_url = 'iamport-checkout.html?user-code=' + user_code,
 					m_redirect_url = 'http://localhost/iamport';
 
 				param.m_redirect_url = m_redirect_url;//강제로 변환
 
-				var inAppBrowserRef = cordova.InAppBrowser.open(payment_url, '_blank', 'location=no');
+				var inAppBrowserRef = cordova.InAppBrowser.open(payment_url, '_blank', 'location=no'),
+					paymentProgress = false;
 
 				var startCallback = function(event) {
 					if( (event.url).indexOf(m_redirect_url) === 0 ) { //결제 끝.
@@ -43,10 +44,11 @@
 				};
 
 				var stopCallback = function(event) {
-					if ( (event.url).indexOf(payment_url) > -1 ) {
-						var iamport_script = "IMP.init('" + user_code + "');\n",
-							inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}";
-						iamport_script += "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
+					if ( !paymentProgress && (event.url).indexOf(payment_url) > -1 ) {
+						paymentProgress = true;
+
+						var inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}",
+							iamport_script = "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
 
 						inAppBrowserRef.executeScript({
 							code : iamport_script
