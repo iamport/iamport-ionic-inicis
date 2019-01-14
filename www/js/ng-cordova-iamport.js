@@ -43,13 +43,14 @@
 
           var stopCallback = function(event) {
             if ( !paymentProgress && (event.url).indexOf(payment_url) > -1 ) {
-              paymentProgress = true;
-
               var inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?imp_success=true&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid;} else {location.href = '" + m_redirect_url + "?imp_success=false&imp_uid='+rsp.imp_uid+'&merchant_uid='+rsp.merchant_uid+'&error_msg='+rsp.error_msg;}}",
                   iamport_script = "IMP.request_pay(" + JSON.stringify(param) + "," + inlineCallback + ")";
 
               inAppBrowserRef.executeScript({
                 code : iamport_script
+              }, function() {
+                //executeScript 가 성공적으로 실행되었는지 체크한 다음 paymentProgress = true로 변경
+                paymentProgress = true;
               });
             }
           };
@@ -70,6 +71,21 @@
           inAppBrowserRef.addEventListener('loadstart', startCallback);
           inAppBrowserRef.addEventListener('loadstop', stopCallback);
           inAppBrowserRef.addEventListener('exit', exitCallback);
+
+          //fallback
+          var triggerFallback = function() {
+            if (paymentProgress)  return;
+
+            stopCallback({url: payment_url}); //Fake Trigger
+
+            setTimeout(function() {
+              triggerFallback();
+            }, 500);
+          };
+
+          setTimeout(function() {
+            triggerFallback();
+          }, 1500); //loadstop 이 호출안되었는지 1.5s 기다려봄
 
           //for KakaoPay
           if ( param.app_scheme ) {
