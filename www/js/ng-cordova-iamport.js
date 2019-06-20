@@ -5,7 +5,7 @@
     .factory('$cordovaIamport', iamport);
 
     function iamport($q, $http) {
-      return { payment : iamportPayment };
+      return { payment : iamportPayment, certification : iamportCertification };
 
       function parseQuery(query) {
         var obj = {},
@@ -105,6 +105,83 @@
               }
             }
           }
+
+          inAppBrowserRef.show();
+
+        } else {
+          deferred.reject("InAppBrowser plugin을 필요로 합니다. InAppBrowser plugin를 찾을 수 없습니다.");
+        }
+
+        return deferred.promise;
+      }
+
+      function iamportCertification(user_code, param) {
+        var deferred = $q.defer();
+
+        if( cordova.InAppBrowser ) {
+          var certification_url = 'iamport-checkout.html?user-code=' + user_code,
+              m_redirect_url = 'http://localhost/iamport-certification';
+
+          param.m_redirect_url = m_redirect_url;//강제로 변환
+
+          var inAppBrowserRef = cordova.InAppBrowser.open(certification_url, '_blank', 'location=no'),
+              progress = false;
+
+          var startCallback = function(event) {
+            if( (event.url).indexOf(m_redirect_url) === 0 ) { //본인인증 끝.
+              var query = (event.url).substring( m_redirect_url.length + 1 ) // m_redirect_url+? 뒤부터 자름
+              var data = parseQuery(query); //query data
+
+              deferred.resolve(data);
+              finish();
+            }
+          };
+
+          var stopCallback = function(event) {
+            if ( !progress && (event.url).indexOf(certification_url) > -1 ) {
+              var inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?success=true&imp_uid='+rsp.imp_uid;} else {location.href = '" + m_redirect_url + "?success=false&imp_uid='+rsp.imp_uid+'&error_msg='+rsp.error_msg;}}",
+                  iamport_script = "IMP.certification(" + JSON.stringify(param) + "," + inlineCallback + ")";
+
+              inAppBrowserRef.executeScript({
+                code : iamport_script
+              }, function() {
+                //executeScript 가 성공적으로 실행되었는지 체크한 다음 progress = true로 변경
+                progress = true;
+              });
+            }
+          };
+
+          var exitCallback = function(event) {
+            deferred.reject("사용자가 본인인증을 취소하였습니다.");
+          };
+
+          var finish = function() {
+            inAppBrowserRef.removeEventListener('loadstart', startCallback);
+            inAppBrowserRef.removeEventListener('loadstop', stopCallback);
+            inAppBrowserRef.removeEventListener('exit', exitCallback);
+            setTimeout(function() {
+              inAppBrowserRef.close();
+            }, 10);
+          }
+
+          inAppBrowserRef.addEventListener('loadstart', startCallback);
+          inAppBrowserRef.addEventListener('loadstop', stopCallback);
+          inAppBrowserRef.addEventListener('exit', exitCallback);
+
+          //fallback
+          var triggerFallback = function() {
+            if (paymentProgress)  return;
+
+            stopCallback({url: certification_url}); //Fake Trigger
+
+            setTimeout(function() {
+              triggerFallback();
+            }, 500);
+          };
+
+          setTimeout(function() {
+            triggerFallback();
+          }, 1500); //loadstop 이 호출안되었는지 1.5s 기다려봄
 
           inAppBrowserRef.show();
 
