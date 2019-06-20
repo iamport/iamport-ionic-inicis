@@ -3,6 +3,8 @@ Cordova 또는 Ionic 환경에서 아임포트 결제모듈을 쉽게 연동하�
 외부주소로의 redirection이 포함되어있어 InAppBrowser를 활용하며, 외부주소에서 다시 앱 복귀를 위해 Custom URL Scheme을 사용합니다.  
 (InAppBrowser는 URL처리가 가능하도록 fork된 버전을 사용하고 있습니다)  
 
+휴대폰 본인인증도 적용 가능합니다.   
+
 ## Required
 
 - [Custom URL scheme](https://github.com/EddyVerbruggen/Custom-URL-scheme)
@@ -36,7 +38,7 @@ cordova 특성상 `inappbrowser`를 통해 결제프로세스가 진행되므로
 - m\_redirect\_url속성을 선언할 필요가 없음(선언해도 overwrite됨)  
 - callback에 전달되는 rsp속성이 제한됨(success, imp\_uid, merchant\_uid, error\_msg 뿐)  
 
-### 2. Example  
+### 2. 결제 Example  
 ```javascript
 IonicIamportInicis.payment('imp68124833', {
     pay_method : 'card',
@@ -55,6 +57,22 @@ IonicIamportInicis.payment('imp68124833', {
         msg += '상점 거래ID : ' + rsp.merchant_uid;
     } else {
         var msg = '결제에 실패하였습니다.';
+        msg += '에러내용 : ' + rsp.error_msg;
+    }
+    alert(msg);
+});
+```
+
+### 3. 본인인증 Example  
+```javascript
+IonicIamportInicis.certification('가맹점 식별코드', {
+    name : '홍길동'
+}, function(rsp) {
+    if ( rsp.success ) {
+        var msg = '본인인증이 완료되었습니다.';
+        msg += '고유ID : ' + rsp.imp_uid;
+    } else {
+        var msg = '본인인증에 실패하였습니다.';
         msg += '에러내용 : ' + rsp.error_msg;
     }
     alert(msg);
@@ -112,6 +130,35 @@ angular.controller('SomethingCtrl', function($scope, $http, $cordovaIamport) {
 	
 });
 ```
+
+### 4. 본인인증 Example  
+```javascript
+angular.controller('SomethingCtrl', function($scope, $http, $cordovaIamport) {
+	
+	$scope.certification = function() {
+		//do something
+		
+		//본인인증시작
+		var iamport_user_code = 'imp12345678'; // https://admin.iamport.kr에 가입 후 발급
+		var param = {
+			phone : '010-1234-1234'
+	    };
+	
+	    $cordovaIamport.certification(iamport_user_code, param).then(function(result) {
+	    	//server에서 결제완료여부 최종 체크할 수 있도록 imp_uid전달
+	    	$http.post('/certifications/confirm', {imp_uid:result.imp_uid}).then(function(rsp) {
+	    		alert(result.imp_uid + '본인인증이 완료되었습니다.');
+	    	}, function(err) {
+	    		//do error handling
+	    	})
+	    }, function(err) {
+	    	alert(err);
+	    });
+	}
+	
+});
+```
+
 
 ## 특이사항  
 ### Android

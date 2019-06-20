@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
   id="cordova-plugin-iamport-inicis"
-  version="1.1.6">
+  version="1.1.7">
 
     <name>IonicIamportInicis</name>
     <description>Inicis Payment Plugin using Iamport</description>
@@ -21,7 +21,7 @@
     <asset src="www/iamport-checkout.html" target="iamport-checkout.html"></asset>
     <asset src="www/js/jquery-1.12.4.min.js" target="js/jquery-1.12.4.min.js"></asset>
     <asset src="www/js/ng-cordova-iamport.js" target="js/ng-cordova-iamport.js"></asset>
-    
+
     <js-module src="www/js/cordova-iamport.js" name="IonicIamportInicis">
         <clobbers target="IonicIamportInicis" />
     </js-module>
