@@ -99,7 +99,7 @@
 				setTimeout(function() {
 					triggerFallback();
 				}, 1500); //loadstop 이 호출안되었는지 1.5s 기다려봄
-				
+
 
 				//for KakaoPay
 				if ( param.app_scheme ) {
@@ -124,6 +124,81 @@
 			} else {
 				IMP.init(user_code);
 				IMP.request_pay(param, callback);
+			}
+		},
+		certification : function (user_code, param, callback) {
+			if( cordova.InAppBrowser ) {
+				var certification_url = 'iamport-checkout.html?user-code=' + user_code,
+					m_redirect_url = 'http://localhost/iamport-certification';
+
+				param.m_redirect_url = m_redirect_url;//강제로 변환
+
+				var inAppBrowserRef = cordova.InAppBrowser.open(certification_url, '_blank', 'location=no'),
+					progress = false;
+
+				var startCallback = function(event) {
+					if( (event.url).indexOf(m_redirect_url) === 0 ) { //본인인증 끝.
+						var query = (event.url).substring( m_redirect_url.length + 1 ) // m_redirect_url+? 뒤부터 자름
+						var data = parseQuery(query); //query data
+
+						if ( typeof callback == 'function' ) {
+							var rsp = {
+								success : data.success === 'true',
+								imp_uid : data.imp_uid,
+								error_msg : data.error_msg
+							};
+
+							callback.call(cordova, rsp);
+						}
+
+						finish();
+					}
+				};
+
+				var stopCallback = function(event) {
+					if ( !progress && (event.url).indexOf(certification_url) > -1 ) {
+						progress = true;
+
+						var inlineCallback = "function(rsp) {if(rsp.success) {location.href = '" + m_redirect_url + "?success=true&imp_uid='+rsp.imp_uid;} else {location.href = '" + m_redirect_url + "?success=false&imp_uid='+rsp.imp_uid+'&error_msg='+rsp.error_msg;}}",
+							iamport_script = "IMP.certification(" + JSON.stringify(param) + "," + inlineCallback + ")";
+
+						inAppBrowserRef.executeScript({
+							code : iamport_script
+						});
+					}
+				};
+
+				var exitCallback = function(event) {
+					if ( typeof callback == 'function' ) {
+						var rsp = {
+							success : false,
+							imp_uid : null,
+							error_code : 'CANCEL',
+							error_msg : '사용자가 본인인증을 취소하였습니다.'
+						};
+
+						callback.call(cordova, rsp);
+					}
+				};
+
+				var finish = function() {
+					inAppBrowserRef.removeEventListener('loadstart', startCallback);
+					inAppBrowserRef.removeEventListener('loadstop', stopCallback);
+					inAppBrowserRef.removeEventListener('exit', exitCallback);
+					setTimeout(function() {
+						inAppBrowserRef.close();
+					}, 10);
+				};
+
+
+				inAppBrowserRef.addEventListener('loadstart', startCallback);
+				inAppBrowserRef.addEventListener('loadstop', stopCallback);
+				inAppBrowserRef.addEventListener('exit', exitCallback);
+
+				inAppBrowserRef.show();
+			} else {
+				IMP.init(user_code);
+				IMP.certification(param, callback);
 			}
 		}
 	};
